@@ -1,27 +1,77 @@
-.formAddWork {
-  display: flex;
-  flex-direction: column;
+.userBox {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
 }
 
-.formAddWork__input {
-	font-size: 1em;
-	font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-	margin-top: 0.4em;
-}
-
-.formAddWork__button {
-	font-size: 1em;
-	font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-	margin-top: 1em;
-}
-
-.tadleOfWorks {
-	border: 1px solid #999;
-	border-collapse: collapse;
+.userBox_name {
+	margin: 2px 0;
 	font-size: 1em;
 	font-family: "Roboto", "Helvetica", "Arial", sans-serif;
 }
 
-.tadleOfWorks__td {
-	border: 1px solid #999;
+.userBox_email {
+	margin: 2px 0;
+	font-size: 0.8em;
+	color: #696969;
+	font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+}
+
+.userBox_exit {
+	margin: 0.5em 0;
+	font-size: 1em;
+	font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.spaceInfo {
+	margin: 0.25em 0;
+	font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+	color: #696969;
+}
+
+.worksList {
+	margin-bottom: 0;
+}
+
+.addWork {
+	margin: 2em 0 1em !important;
+}
+
+.workCard {
+	font-size: 1em;
+	font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+	padding: 0.5em;
+	margin: 0.5em 0 0;
+}
+
+.workCard__name {
+	margin: 0 0 0.5em;
+}
+
+.workCard__book {
+	font-size: 0.8em;
+	color: #696969;
+	margin: 0;
+}
+
+.workCard__event {
+	font-size: 0.8em;
+	color: #FFF;
+	margin: 0.25em 0.25em 0;
+	background-color: #D32F2F;
+	border-radius: 0.5em;
+	padding: 0.25em 0.5em;
+	display: inline-block;
+}
+
+.workCard__theme {
+	font-size: 0.8em;
+	color: #FFF;
+	margin: 0.25em 0.25em 0;
+	background-color: #1976D2;
+	border-radius: 0.5em;
+	padding: 0.25em 0.5em;
+	display: inline-block;
 }

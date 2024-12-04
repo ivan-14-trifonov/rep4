@@ -1,46 +1,55 @@
 import "./user.css";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAuth, signOut } from "firebase/auth";
-import { Button, Container } from "@mui/material";
+import { Button, Container, Card } from "@mui/material";
+
 import { getFirestore } from "firebase/firestore";
 import { app } from "../firebase";
-import { AddWork, GetWorks } from "../firestore"; // GetBooks
+import { GetElements, GetEl } from "../firestore";
 
-function formAddWork(db, flag, setFlag) {
+function cardsOfWorks(works) {
 
-  async function submitAddWork(e: React.FormEvent) {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const work = formData.get("work");
-    const number = formData.get("number");
-    AddWork(work, number, db);
-    setFlag(!flag);
-    e.target.reset();
+  function inBook(work) {
+    if (work.number) {
+      return `№${work.number}`;
+    } else if (work.page) {
+      return `стр. ${work.page}`;
+    } else {
+      return "";
+    };
+  }
+
+  function ifBook(work) {
+    if (work.book) {
+      return <p className="workCard__book">{work.book}, {inBook(work)}</p>;
+    }
+  }
+
+  function ifEvent(work) {
+    if (work.event) {
+      return <p className="workCard__event">{work.event}</p>;
+    }
+  }
+
+  function ifTheme(work) {
+    if (work.theme) {
+      return <p className="workCard__theme">{work.theme}</p>;
+    }
   }
 
   return (
-    <form onSubmit={submitAddWork} className="formAddWork">
-      <input className="formAddWork__input" name="work" placeholder="Название" />
-      <input className="formAddWork__input" name="number" placeholder="Номер" />
-
-      <button className="formAddWork__button" type="submit">Сохранить</button>
-    </form>
-  );
-}
-
-function tadleOfWorks(works) {
-  return (
-    <table className="tadleOfWorks">
+    <div>
       {Array(works.length).fill().map((_, i) =>
-        <tr>
-          <td className="tadleOfWorks__td">{works[i][0]}</td>
-          <td className="tadleOfWorks__td">{works[i][1].name}</td>
-          <td className="tadleOfWorks__td">{works[i][1].number}</td>
-        </tr>
+        <Card variant="outlined" className="workCard" name={works[i][0]}>
+          <p className="workCard__name">{works[i].name}</p>
+          {ifBook(works[i])}
+          {ifEvent(works[i])}
+          {ifTheme(works[i])}
+      </Card>
       )}
-    </table>
+    </div>
   )
 }
 
@@ -54,6 +63,10 @@ export default function User() {
     navigate("/login");
   }
 
+  const onAdd = () => {
+    navigate("/user-add-work");
+  }
+
   const onLogout = () => {
     signOut(auth).then(() => {
       navigate("/login");
@@ -64,21 +77,54 @@ export default function User() {
 
   const db = getFirestore(app);
 
-  const [flag, setFlag] = useState(false);
+  const connect = {
+    db: db,
+    space: "Go2Aiju3Nuq9wuFqhFha",
+    musicalGroup: "IJQZkACyMCfYNoCjiHqS",
+  };
 
-  let works = GetWorks(db, flag);
-  let tadle = tadleOfWorks(works);
-  let form = formAddWork(db, flag, setFlag);
+  const users = GetElements(connect, "space/" + connect.space + "/users")
+
+  if (user && (users.length != 0)) {
+    if (!users.map(i => i.uid).includes(user.uid)) {
+      return (
+        <Container maxWidth="xs" sx={{mt: 2}}>
+          <h1>Недостаточно прав</h1>
+          <p>У вас нет доступа к данному пространству.</p>
+        </Container>
+      )
+      
+    }
+  }
+
+  const space = GetEl(connect, "space", connect.space);
+  const musicalGroup = GetEl(connect, "space/" + connect.space + "/musical_group", connect.musicalGroup);
+
+  const connectInfo = {
+    space: space.name,
+    musicalGroup: musicalGroup.name,
+  };
+
+  let works = GetElements(connect, "space/" + connect.space + "/musical_group/" + connect.musicalGroup + "/work");
+  // alert(JSON.stringify(works));
+  let cards = cardsOfWorks(works);
 
   return (
     <Container maxWidth="xs" sx={{mt: 2}}>
-      <h1>Репертуар</h1>
-      <div>{tadle}</div>
-      <h2>Добавить произведение</h2>
-      <div>{form}</div>
-      <Button variant="contained" color="error" onClick={onLogout} sx={{mt: 3}} fullWidth>
-        Выйти
-      </Button>
+      {user &&
+        <div className="userBox">
+          <p className="userBox_name">{user.displayName}</p>
+          <p className="userBox_email">{user.email}</p>
+          <p className="userBox_exit" onClick={onLogout}>Выйти</p>
+        </div>
+      }
+      <h1 className="worksList">Cписок произведений</h1>
+      {(connectInfo.space && connectInfo.musicalGroup) &&
+        <p className="spaceInfo">{connectInfo.space} &bull; {connectInfo.musicalGroup}</p>
+      }
+      <Button className="addWork" variant="contained" onClick={onAdd} sx={{mt: 3}} fullWidth>Добавить произведение</Button>
+      <div>{cards}</div>
     </Container>
   )
 }
+

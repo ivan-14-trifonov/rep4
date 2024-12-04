@@ -1,36 +1,48 @@
 import { useEffect, useState } from "react";
-import { collection, addDoc, getDocs } from "firebase/firestore";
+import { collection, addDoc, getDocs, doc, getDoc } from "firebase/firestore";
 
-export async function AddWork(name, number, db) {
-  alert(name);
+export async function AddWork(connect, fields) {
   try {
-    const docRef = await addDoc(collection(db, "work"), {
-      name: name,
-      number: number,
-    });
+    const docRef = await addDoc(collection(connect.db, "space", connect.space, "musical_group", connect.musicalGroup, "work"), fields);
   } catch (e) {
     // An error happened.
     // console.error("Error adding document: ", e);
   }
 }
 
-export function GetWorks(db, flag) {
-  const [works, setWorks] = useState([]);
+export function GetElements(connect, tadle) {
+  const [elements, setElements] = useState([]);
 
   useEffect(() => {
     const asyncEffect = async () => {
-      const querySnapshot = await getDocs(collection(db, "work"));
+      const querySnapshot = await getDocs(collection(connect.db, tadle));
 
       let result = [];
       querySnapshot.forEach((doc) => {
-        result.push([doc.id, doc.data()]);
+        result.push(doc.data());
       });
 
-      setWorks(result);
+      setElements(result);
     };
 
     asyncEffect();
-  }, [flag]);
+  }, []);
 
-  return works;
+  return elements;
+}
+
+export function GetEl(connect, tadle, idEl) {
+  const [el, setEl] = useState([]);
+
+  useEffect(() => {
+    const asyncEffect = async () => {
+      const docRef = doc(connect.db, tadle, idEl);
+      const docSnap = await getDoc(docRef);
+      setEl(docSnap.data());
+    };
+
+    asyncEffect();
+  }, []);
+
+  return el;
 }

@@ -8,6 +8,7 @@ import '@fontsource/roboto/700.css';
 import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 import Login from "./routes/login";
 import User from "./routes/user";
+import UserAddWork from "./routes/user-add-work";
 import ErrorPage from "./error-page";
 
 const router = createBrowserRouter([
@@ -28,8 +29,11 @@ const router = createBrowserRouter([
     path: "/user",
     element: <User/>,
   },
+  {
+    path: "/user-add-work",
+    element: <UserAddWork/>,
+  },
 ]);
-
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
